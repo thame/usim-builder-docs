@@ -1,102 +1,105 @@
-require('dotenv').config();
-const fs = require('fs');
-const yaml = require('js-yaml');
+require('dotenv').config()
+const fs = require('fs')
+const yaml = require('js-yaml')
+const _ = require('lodash')
 
-// Convert a string to Start Case
-const toStartCase = str => str.replace(/\w\S*/g, txt => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase());
+const toStartCase = (str) => _.startCase(_.toLower(str.replace(/_/g, ' ')))
 
-// Read YAML file
-const readYAML = filePath => {
-  try {
-    return yaml.load(fs.readFileSync(filePath, 'utf8'));
-  } catch (err) {
-    console.error(err);
-  }
-};
+const generateMarkdown = (obj, fieldsData) => {
+  if (!obj) return ''
 
-// Read JSON file
-const readJSON = filePath => {
-  try {
-    return JSON.parse(fs.readFileSync(filePath, 'utf8'));
-  } catch (err) {
-    console.error(err);
-  }
-};
+  let markdown = `# ${toStartCase(obj.collection)}\n\n`
 
-// Generate Markdown table from rows
-const generateMarkdownTable = rows => {
-  let md = '| Field | Type | Description | Required |\n| --- | --- | --- | --- |\n';
-  rows.forEach(row => {
-    const fieldName = row.options ? `[${row.field}](#${row.field})` : row.field;
-    md += `| ${fieldName} | ${row.type} | ${row.description} | ${row.required} |\n`;
-  });
-  return md;
-};
+  const processFields = (fields, level) => {
+    let content = ''
+    let details = ''
+    if (!fields || !Array.isArray(fields)) return { content: '', details: '' }
 
-// Recursive function to process each group or subgroup
-const processGroup = (groupFields, fieldToCollectionMap, parentItem) => {
-  let markdownContent = '';
-  
-  if (Array.isArray(groupFields)) {
-    const rows = [];
-    groupFields.forEach(fieldName => {
-      const fieldData = fieldToCollectionMap[`${parentItem}.${fieldName}`] || fieldToCollectionMap[fieldName];
-      if (!fieldData) {
-        console.warn(`Skipped ${fieldName} due to missing field data`);
-        return;
+    fields.forEach((field) => {
+      const fieldData = fieldsData.find((f) => f.collection === obj.collection && f.field === field)
+
+      if (fieldData) {
+        const { meta, schema } = fieldData
+        const defaultVal = schema?.default_value ? `Default: ${schema.default_value}` : ''
+        const desc = meta.note ? meta.note : defaultVal
+        const required = meta.required ? '**Yes**' : 'No'
+
+        let fieldName = toStartCase(field)
+        if (meta.options?.choices) {
+          fieldName = `[${fieldName}](#${field})`
+          details += `${'#'.repeat(level + 1)} ${toStartCase(
+            field
+          )}\n\nOptions:\n\n${meta.options.choices
+            .map((choice) => `- ${choice.text}`)
+            .join('\n')}\n\n`
+        }
+
+        content += `| ${fieldName} | ${meta.interface} | ${desc} | ${required} |\n`
       }
-      const meta = fieldData.meta;
-      rows.push({
-        field: fieldName,
-        type: meta.interface,
-        description: meta.note,
-        required: meta.required ? 'Yes' : 'No',
-        options: meta.options && meta.options.choices
-      });
-    });
-    markdownContent += generateMarkdownTable(rows);
+    })
 
-    // Add expanded choices
-    rows.forEach(row => {
-      if (row.options) {
-        markdownContent += `\n### ${row.field}\n\n`;
-        markdownContent += '- ' + row.options.map(choice => choice.text).join('\n- ') + '\n';
+    return {
+      content: `| Field | Type | Description | Required |\n| --- | --- | --- | --- |\n${content}\n`,
+      details,
+    }
+  }
+
+  const processGroup = (group, level, fields) => {
+    if (!group) return ''
+
+    let content = ''
+    let groupDetails = ''
+    if (typeof group === 'string') {
+      const { content: fieldContent, details } = processFields(fields[group], level)
+      content += `${'#'.repeat(level)} ${toStartCase(group)}\n\n${fieldContent}${details}`
+    } else {
+      for (const [key, subgroups] of Object.entries(group)) {
+        const { content: fieldContent, details } = processFields(fields[key], level)
+        content += `${'#'.repeat(level)} ${toStartCase(key)}\n\n${fieldContent}${details}`
+        subgroups.forEach((subgroup) => {
+          content += processGroup(subgroup, level + 1, fields[key] || {})
+        })
       }
-    });
+    }
+    return content
+  }
+
+  if (obj.groups) {
+    obj.groups.forEach((group) => {
+      markdown += processGroup(group, 2, obj.fields)
+    })
   } else {
-    Object.keys(groupFields).forEach(subGroupName => {
-      markdownContent += `### ${toStartCase(subGroupName)}\n\n`;
-      markdownContent += processGroup(groupFields[subGroupName], fieldToCollectionMap, `${parentItem}.${subGroupName}`);
-    });
+    const { content, details } = processFields(obj.fields, 2)
+    markdown += content + details
   }
 
-  return markdownContent;
-};
+  return markdown
+}
 
-const snapshotPath = process.env.SNAPSHOT_PATH || './snapshot.yaml';
-const schemaData = readYAML(snapshotPath);
-const structureData = readJSON('./structure.json');
+const main = () => {
+  const structure = require('./structure.js')
+  const snapshotPath = process.env.SNAPSHOT_PATH || './snapshot.yaml'
+  const fieldsData = yaml.load(fs.readFileSync(snapshotPath, 'utf8')).fields
 
-const fieldToCollectionMap = {};
-schemaData.fields.forEach(field => {
-  if (field.collection && field.field) {
-    fieldToCollectionMap[`${field.collection}.${field.field}`] = field;
-  }
-  // Add fields without collection for more flexibility
-  fieldToCollectionMap[field.field] = field;
-});
+  Object.keys(structure).forEach((key) => {
+    const obj = structure[key]
+    let outputPath = key
 
-Object.keys(structureData).forEach(parentItem => {
-  let markdownContent = `# ${toStartCase(parentItem)}\n\n`;
+    if (obj.parent) {
+      if (!fs.existsSync(obj.parent)) {
+        fs.mkdirSync(obj.parent)
+      }
+      outputPath = `${obj.parent}/${key}.md`
+    } else {
+      if (!fs.existsSync(key)) {
+        fs.mkdirSync(key)
+      }
+      outputPath = `${key}/index.md`
+    }
 
-  if (Array.isArray(structureData[parentItem])) {
-    markdownContent += processGroup(structureData[parentItem], fieldToCollectionMap, parentItem);
-  } else {
-    Object.keys(structureData[parentItem]).forEach(groupName => {
-      markdownContent += `## ${toStartCase(groupName)}\n\n`;
-      markdownContent += processGroup(structureData[parentItem][groupName], fieldToCollectionMap, parentItem);
-    });
-  }
+    const content = generateMarkdown(obj, fieldsData)
+    fs.writeFileSync(outputPath, content)
+  })
+}
 
-  fs.writeFileSync(`./${parentItem}.md`, markdownContent);
-});
+main()
