@@ -1,19 +1,23 @@
 # Action
 
-| Name | Description | Type | Required |
-| ---- | ----------- | ---- | -------- |
-| title | N/A | string | No |
-| [type](#type) | N/A | string | No |
-| medication | N/A | alias | No |
-| lab | N/A | alias | No |
-| imaging | N/A | alias | No |
-| diagnostic | N/A | alias | No |
-| nursing | N/A | alias | No |
-### Type
+| Name | Type | Description | Required |
+| --- | --- | --- | --- |
+| [Title](Title) | input | N/A | No |
+| [Type](Type) | select-dropdown | N/A | No |
+| [Medication](Medication) | list-m2m | N/A | No |
+| [Lab](Lab) | list-m2m | N/A | No |
+| [Imaging](Imaging) | list-m2m | N/A | No |
+| [Diagnostic](Diagnostic) | list-m2m | N/A | No |
+| [Nursing](Nursing) | list-m2m | N/A | No |
 
-N/A
+---
 
-#### Options
+#### Type
+
+
+
+##### Options
+
 - Medication
 - Lab
 - Diagnostic Test
@@ -22,5 +26,3 @@ N/A
 - Respiratory
 - Procedure
 - Consult
-
-

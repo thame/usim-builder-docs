@@ -2,25 +2,29 @@
 
 ## Basics
 
-| Name | Description | Type | Required |
-| ---- | ----------- | ---- | -------- |
-| title | The title of the scenario, can reference the diagnosis or key objectives. | string | Yes |
-| description | Describe the events in the scenario, field can include HTML for formatting. | text | No |
-| diagnosis | The key diagnosis addressed, can be free text or an ICD diagnosis. | string | No |
-| patient | A reference to the associated patient. | string | Yes |
-| timeline | A list of events using the junction table "scenario_timeline". | alias | No |
+| Name | Type | Description | Required |
+| --- | --- | --- | --- |
+| [Title](Title) | input | The title of the scenario, can reference the diagnosis or key objectives. | Yes |
+| [Description](Description) | input-rich-text-html | Describe the events in the scenario, field can include HTML for formatting. | No |
+| [Diagnosis](Diagnosis) | input-autocomplete-api | The key diagnosis addressed, can be free text or an ICD diagnosis. | No |
+| [Patient](Patient) | select-dropdown-m2o | A reference to the associated patient. | Yes |
+| [Timeline](Timeline) | list-m2a | A list of events using the junction table "scenario_timeline". | No |
 ## Education
 
-| Name | Description | Type | Required |
-| ---- | ----------- | ---- | -------- |
-| [audience](#audience) | Select the learner level you are targetting. | string | No |
-| objective | List the learner objectives for the scenario. | json | No |
-| debrief | Describe questions to ask and topics to cover during the post-scenario debrief session. Accepts HTML for formatting. | text | No |
-### Audience
+| Name | Type | Description | Required |
+| --- | --- | --- | --- |
+| [Audience](Audience) | select-dropdown | Select the learner level you are targetting. | No |
+| [Objective](Objective) | list | List the learner objectives for the scenario. | No |
+| [Debrief](Debrief) | input-rich-text-html | Describe questions to ask and topics to cover during the post-scenario debrief session. Accepts HTML for formatting. | No |
+
+---
+
+#### Audience
 
 Select the learner level you are targetting.
 
-#### Options
+##### Options
+
 - Medical Student
 - Resident (PGY1-PGY2)
 - Resident (≥ PGY-3)
@@ -29,34 +33,38 @@ Select the learner level you are targetting.
 - Advanced Practice Provider (APP)
 - Nursing Student
 - Nurse
-
-
 ## Logistics
 
-| Name | Description | Type | Required |
-| ---- | ----------- | ---- | -------- |
-| [room](#room) | The setting of the scenario. | string | No |
-| manikin | Reference a specific manikin device if required. | json | No |
-| [monitors](#monitors) | Select all monitor devices required for the scenario. | json | No |
-| setup_duration | Estimated duration in minutes for scenario setup. | integer | No |
-| scenario_duration | Estimated duration in minutes for running the scenario. | integer | No |
-| debrief_duration | Estimated duration in minutes for the post-scenario debrief. | integer | No |
-### Room
+| Name | Type | Description | Required |
+| --- | --- | --- | --- |
+| [Room](Room) | select-dropdown | The setting of the scenario. | No |
+| [Manikin](Manikin) | collection-item-dropdown | Reference a specific manikin device if required. | No |
+| [Monitors](Monitors) | select-multiple-checkbox | Select all monitor devices required for the scenario. | No |
+| [Setup Duration](Setup-Duration) | input | Estimated duration in minutes for scenario setup. | No |
+| [Scenario Duration](Scenario-Duration) | input | Estimated duration in minutes for running the scenario. | No |
+| [Debrief Duration](Debrief-Duration) | input | Estimated duration in minutes for the post-scenario debrief. | No |
+
+---
+
+#### Room
 
 The setting of the scenario.
 
-#### Options
+##### Options
+
 - Operating Room (OR)
 - Emergency Department (ED)
 - Ward
 - ICU
 
+---
 
-### Monitors
+#### Monitors
 
 Select all monitor devices required for the scenario.
 
-#### Options
+##### Options
+
 - Telemetry
 - Pulse Oximetry (SpO2)
 - Blood Pressure (NIBP)
@@ -64,5 +72,3 @@ Select all monitor devices required for the scenario.
 - Central Venous Pressure (CVP)
 - End-Tidal CO2
 - Temperature
-
-

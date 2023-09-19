@@ -2,32 +2,38 @@
 
 ## Demographic
 
-| Name | Description | Type | Required |
-| ---- | ----------- | ---- | -------- |
-| name | The patient's full name (first and last). | string | No |
-| medical_record_number | An assigned medical record number. | integer | No |
-| date_of_birth | The patient's date of birth. | date | No |
-| [sex](#sex) | N/A | string | No |
-| [race](#race) | The patient's race or ethnicity. | string | No |
-| photo | A reference to a media object containing the patient's photo. | uuid | No |
-| height_value | The patient's height in the units specified in Height Unit. | integer | No |
-| [height_unit](#height_unit) | The unit of the Height Value specified. | string | No |
-| weight_value | The patient's weight in the units specified in Weight Unit. | integer | No |
-| [weight_unit](#weight_unit) | The unit of the Weight Value specified. | string | No |
-### Sex
+| Name | Type | Description | Required |
+| --- | --- | --- | --- |
+| [Name](Name) | input | The patient's full name (first and last). | No |
+| [Medical Record Number](Medical-Record-Number) | input | An assigned medical record number. | No |
+| [Date Of Birth](Date-Of-Birth) | datetime | The patient's date of birth. | No |
+| [Sex](Sex) | select-dropdown | N/A | No |
+| [Race](Race) | select-dropdown | The patient's race or ethnicity. | No |
+| [Photo](Photo) | file-image | A reference to a media object containing the patient's photo. | No |
+| [Height Value](Height-Value) | input | The patient's height in the units specified in Height Unit. | No |
+| [Height Unit](Height-Unit) | select-dropdown | The unit of the Height Value specified. | No |
+| [Weight Value](Weight-Value) | input | The patient's weight in the units specified in Weight Unit. | No |
+| [Weight Unit](Weight-Unit) | select-dropdown | The unit of the Weight Value specified. | No |
 
-N/A
+---
 
-#### Options
+#### Sex
+
+
+
+##### Options
+
 - Male
 - Female
 
+---
 
-### Race
+#### Race
 
 The patient's race or ethnicity.
 
-#### Options
+##### Options
+
 - American Indian or Alaska Native
 - Asian
 - Black or African American
@@ -35,66 +41,58 @@ The patient's race or ethnicity.
 - Native Hawaiian or Other Pacific Islander
 - White
 
+---
 
-### Height Unit
+#### Height Unit
 
 The unit of the Height Value specified.
 
-#### Options
+##### Options
+
 - Inches
 - Centimeters
 
+---
 
-### Weight Unit
+#### Weight Unit
 
 The unit of the Weight Value specified.
 
-#### Options
+##### Options
+
 - Pounds (lb)
 - Kilograms (kg)
-
-
 ## History
 
 ### Clinical Presentation
 
-| Name | Description | Type | Required |
-| ---- | ----------- | ---- | -------- |
-| chief_complaint | The patient's chief complaint. | string | No |
-| history_of_present_illness | The history of present illness, accepts HTML formatting. | text | No |
-
-
+| Name | Type | Description | Required |
+| --- | --- | --- | --- |
+| [Chief Complaint](Chief-Complaint) | input | The patient's chief complaint. | No |
+| [History Of Present Illness](History-Of-Present-Illness) | input-rich-text-html | The history of present illness, accepts HTML formatting. | No |
 ### Background
 
-| Name | Description | Type | Required |
-| ---- | ----------- | ---- | -------- |
-| past_medical_history | An array of past medical history items.  | json | No |
-| past_surgical_history | An array of past surgical history items.  | json | No |
-| medications | An array of current medications. | json | No |
-| allergies | An array of patient allergies (consider including reaction in parentheses). | json | No |
-| family_history | An array of family history elements (consider adding relation in parentheses). | json | No |
-| social_history | An array of free text elements for social history. | json | No |
+| Name | Type | Description | Required |
+| --- | --- | --- | --- |
+| [Past Medical History](Past-Medical-History) | list | An array of past medical history items.  | No |
+| [Past Surgical History](Past-Surgical-History) | list | An array of past surgical history items.  | No |
+| [Medications](Medications) | list | An array of current medications. | No |
+| [Allergies](Allergies) | list | An array of patient allergies (consider including reaction in parentheses). | No |
+| [Family History](Family-History) | list | An array of family history elements (consider adding relation in parentheses). | No |
+| [Social History](Social-History) | list | An array of free text elements for social history. | No |
+### Review Of Systems
 
-
-### Review Of Systems Template
-
-| Name | Description | Type | Required |
-| ---- | ----------- | ---- | -------- |
-
-
+| Name | Type | Description | Required |
+| --- | --- | --- | --- |
 ## Diagnostic
 
 ### Vital Signs
 
-| Name | Description | Type | Required |
-| ---- | ----------- | ---- | -------- |
-| vital_signs_template | A reference to a Vital Signs object. | string | No |
-
-
+| Name | Type | Description | Required |
+| --- | --- | --- | --- |
+| [Vital Signs Template](Vital-Signs-Template) | select-dropdown-m2o | A reference to a Vital Signs object. | No |
 ### Physical Exam
 
-| Name | Description | Type | Required |
-| ---- | ----------- | ---- | -------- |
-| physical_exam_template | A reference to a Physical Exam object. | string | No |
-
-
+| Name | Type | Description | Required |
+| --- | --- | --- | --- |
+| [Physical Exam Template](Physical-Exam-Template) | select-dropdown-m2o | A reference to a Physical Exam object. | No |
