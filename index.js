@@ -2,7 +2,7 @@ require('dotenv').config();
 const fs = require('fs');
 const yaml = require('js-yaml');
 
-// Function to read YAML file
+// Read YAML file
 const readYAML = (filePath) => {
   try {
     return yaml.load(fs.readFileSync(filePath, 'utf8'));
@@ -11,7 +11,7 @@ const readYAML = (filePath) => {
   }
 };
 
-// Function to read JSON file
+// Read JSON file
 const readJSON = (filePath) => {
   try {
     return JSON.parse(fs.readFileSync(filePath, 'utf8'));
@@ -30,6 +30,38 @@ const generateMarkdownTable = (rows) => {
   return md;
 };
 
+// Recursive function to process each group or subgroup
+const processGroup = (groupFields, fieldToCollectionMap, parentItem) => {
+  let markdownContent = '';
+
+  if (Array.isArray(groupFields)) {
+    const rows = [];
+    groupFields.forEach(fieldName => {
+      const fieldData = fieldToCollectionMap[`${parentItem}.${fieldName}`];
+      if (!fieldData) {
+        console.warn(`Skipped ${fieldName} due to missing field data`);
+        return;
+      }
+      const meta = fieldData.meta;
+      rows.push({
+        field: fieldName,
+        type: meta.interface,
+        description: meta.note,
+        required: meta.required ? 'Yes' : 'No',
+        options: meta.options && meta.options.choices
+      });
+    });
+    markdownContent += generateMarkdownTable(rows);
+  } else {
+    Object.keys(groupFields).forEach(subGroupName => {
+      markdownContent += `### ${subGroupName}\n\n`;
+      markdownContent += processGroup(groupFields[subGroupName], fieldToCollectionMap, parentItem);
+    });
+  }
+  
+  return markdownContent;
+};
+
 const snapshotPath = process.env.SNAPSHOT_PATH || './snapshot.yaml';
 const schemaData = readYAML(snapshotPath);
 const structureData = readJSON('./structure.json');
@@ -44,42 +76,14 @@ schemaData.fields.forEach(field => {
 Object.keys(structureData).forEach(parentItem => {
   let markdownContent = `# ${parentItem}\n\n`;
 
-  Object.keys(structureData[parentItem]).forEach(groupName => {
-    const groupFields = Array.isArray(structureData[parentItem][groupName]) ? structureData[parentItem][groupName] : [];
-    markdownContent += `## ${groupName}\n\n`;
-
-    const rows = [];
-    groupFields.forEach(fieldName => {
-      const fieldData = fieldToCollectionMap[`${parentItem}.${fieldName}`];
-      if (!fieldData) {
-        console.warn(`Skipped ${fieldName} due to missing field data`);
-        return;
-      }
-
-      const meta = fieldData.meta;
-      rows.push({
-        field: fieldName,
-        type: meta.interface,
-        description: meta.note,
-        required: meta.required ? 'Yes' : 'No',
-        options: meta.options && meta.options.choices
-      });
+  if (Array.isArray(structureData[parentItem])) {
+    markdownContent += processGroup(structureData[parentItem], fieldToCollectionMap, parentItem);
+  } else {
+    Object.keys(structureData[parentItem]).forEach(groupName => {
+      markdownContent += `## ${groupName}\n\n`;
+      markdownContent += processGroup(structureData[parentItem][groupName], fieldToCollectionMap, parentItem);
     });
-
-    markdownContent += generateMarkdownTable(rows);
-
-    // Generate choices section for fields
-    groupFields.forEach(fieldName => {
-      const fieldData = fieldToCollectionMap[`${parentItem}.${fieldName}`];
-      if (!fieldData) return;
-
-      const meta = fieldData.meta;
-      if (meta.options && meta.options.choices) {
-        markdownContent += `\n### ${fieldName}\n\n`;
-        markdownContent += '- ' + meta.options.choices.map(choice => choice.text).join('\n- ') + '\n';
-      }
-    });
-  });
+  }
 
   fs.writeFileSync(`./${parentItem}.md`, markdownContent);
 });

@@ -16,17 +16,6 @@
 | [audience](#audience) | select-dropdown | Select the learner level you are targetting. | No |
 | objective | list | List the learner objectives for the scenario. | No |
 | debrief | input-rich-text-html | Describe questions to ask and topics to cover during the post-scenario debrief session. Accepts HTML for formatting. | No |
-
-### audience
-
-- Medical Student
-- Resident (PGY1-PGY2)
-- Resident (≥ PGY-3)
-- Fellow
-- Attending
-- Advanced Practice Provider (APP)
-- Nursing Student
-- Nurse
 ## logistics
 
 | Field | Type | Description | Required |
@@ -37,20 +26,3 @@
 | setup_duration | input | Estimated duration in minutes for scenario setup. | No |
 | scenario_duration | input | Estimated duration in minutes for running the scenario. | No |
 | debrief_duration | input | Estimated duration in minutes for the post-scenario debrief. | No |
-
-### room
-
-- Operating Room (OR)
-- Emergency Department (ED)
-- Ward
-- ICU
-
-### monitors
-
-- Telemetry
-- Pulse Oximetry (SpO2)
-- Blood Pressure (NIBP)
-- Arterial Blood Pressure (invasive)
-- Central Venous Pressure (CVP)
-- End-Tidal CO2
-- Temperature

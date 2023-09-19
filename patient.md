@@ -14,35 +14,37 @@
 | [height_unit](#height_unit) | select-dropdown | The unit of the Height Value specified. | No |
 | weight_value | input | The patient's weight in the units specified in Weight Unit. | No |
 | [weight_unit](#weight_unit) | select-dropdown | The unit of the Weight Value specified. | No |
-
-### sex
-
-- Male
-- Female
-
-### race
-
-- American Indian or Alaska Native
-- Asian
-- Black or African American
-- Hispanic or Latino
-- Native Hawaiian or Other Pacific Islander
-- White
-
-### height_unit
-
-- Inches
-- Centimeters
-
-### weight_unit
-
-- Pounds (lb)
-- Kilograms (kg)
 ## history
+
+### clinical_presentation
+
+| Field | Type | Description | Required |
+| --- | --- | --- | --- |
+| chief_complaint | input | The patient's chief complaint. | No |
+| history_of_present_illness | input-rich-text-html | The history of present illness, accepts HTML formatting. | No |
+### background
+
+| Field | Type | Description | Required |
+| --- | --- | --- | --- |
+| past_medical_history | list | An array of past medical history items.  | No |
+| past_surgical_history | list | An array of past surgical history items.  | No |
+| medications | list | An array of current medications. | No |
+| allergies | list | An array of patient allergies (consider including reaction in parentheses). | No |
+| family_history | list | An array of family history elements (consider adding relation in parentheses). | No |
+| social_history | list | An array of free text elements for social history. | No |
+### review_of_systems
 
 | Field | Type | Description | Required |
 | --- | --- | --- | --- |
 ## diagnostic
 
+### vital_signs
+
 | Field | Type | Description | Required |
 | --- | --- | --- | --- |
+| vital_signs_template | select-dropdown-m2o | A reference to a Vital Signs object. | No |
+### physical_exam
+
+| Field | Type | Description | Required |
+| --- | --- | --- | --- |
+| physical_exam_template | select-dropdown-m2o | A reference to a Physical Exam object. | No |
