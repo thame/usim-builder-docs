@@ -7,7 +7,7 @@
 | Name | input | The patient's full name (first and last). | No |
 | Medical Record Number | input | An assigned medical record number. | No |
 | Date Of Birth | datetime | The patient's date of birth. | No |
-| [Sex](#sex) | select-dropdown | Default: The patient''s sex. | No |
+| [Sex](#sex) | select-dropdown | The patient's sex. | No |
 | [Race](#race) | select-dropdown | The patient's race or ethnicity. | No |
 | Photo | file-image | A reference to a media object containing the patient's photo. | No |
 | Height Value | input | The patient's height in the units specified in Height Unit. | No |
