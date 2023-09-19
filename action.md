@@ -1,28 +1,30 @@
-# Action
+# action
 
-| Name | Type | Description | Required |
+## 0
+
+| Field | Type | Description | Required |
 | --- | --- | --- | --- |
-| [Title](Title) | input | N/A | No |
-| [Type](Type) | select-dropdown | N/A | No |
-| [Medication](Medication) | list-m2m | N/A | No |
-| [Lab](Lab) | list-m2m | N/A | No |
-| [Imaging](Imaging) | list-m2m | N/A | No |
-| [Diagnostic](Diagnostic) | list-m2m | N/A | No |
-| [Nursing](Nursing) | list-m2m | N/A | No |
+## 1
 
----
+| Field | Type | Description | Required |
+| --- | --- | --- | --- |
+## 2
 
-#### Type
+| Field | Type | Description | Required |
+| --- | --- | --- | --- |
+## 3
 
+| Field | Type | Description | Required |
+| --- | --- | --- | --- |
+## 4
 
+| Field | Type | Description | Required |
+| --- | --- | --- | --- |
+## 5
 
-##### Options
+| Field | Type | Description | Required |
+| --- | --- | --- | --- |
+## 6
 
-- Medication
-- Lab
-- Diagnostic Test
-- Imaging
-- Nursing Order
-- Respiratory
-- Procedure
-- Consult
+| Field | Type | Description | Required |
+| --- | --- | --- | --- |
